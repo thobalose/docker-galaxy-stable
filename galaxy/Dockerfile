@@ -59,7 +59,7 @@ RUN apt-get -qq update && apt-get install --no-install-recommends -y apt-transpo
     apt-get install --no-install-recommends -y mercurial python-psycopg2 postgresql-9.3 sudo samtools python-virtualenv \
     nginx-extras nginx-common uwsgi uwsgi-plugin-python supervisor lxc-docker-1.9.1 slurm-llnl slurm-llnl-torque libswitch-perl \
     slurm-drmaa-dev proftpd proftpd-mod-pgsql libyaml-dev nodejs-legacy npm ansible \
-    nano nmap lynx vim curl python-pip python-gnuplot python-rpy2 python-psutil condor python-ldap && \
+    nano nmap lynx vim curl python-pip python-gnuplot python-rpy2 python-psutil condor && \
     pip install --upgrade pip && \
     apt-get purge -y software-properties-common && \
     apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -174,7 +174,8 @@ RUN rm $PG_DATA_DIR_DEFAULT -rf && \
     . $GALAXY_VIRTUAL_ENV/bin/activate && \
     sh create_db.sh -c $GALAXY_CONFIG_FILE && \
     python /usr/local/bin/create_galaxy_user.py --user $GALAXY_DEFAULT_ADMIN_USER --password $GALAXY_DEFAULT_ADMIN_PASSWORD -c $GALAXY_CONFIG_FILE --key $GALAXY_DEFAULT_ADMIN_KEY && \
-    service postgresql stop
+    service postgresql stop && \
+    pip install ldap
 
 # Add Ansible playbook for installing tools
 ADD roles/galaxy-tools-playbook $GALAXY_HOME/ansible/galaxy-tools-playbook
