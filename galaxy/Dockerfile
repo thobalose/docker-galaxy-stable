@@ -175,7 +175,7 @@ RUN rm $PG_DATA_DIR_DEFAULT -rf && \
     sh create_db.sh -c $GALAXY_CONFIG_FILE && \
     python /usr/local/bin/create_galaxy_user.py --user $GALAXY_DEFAULT_ADMIN_USER --password $GALAXY_DEFAULT_ADMIN_PASSWORD -c $GALAXY_CONFIG_FILE --key $GALAXY_DEFAULT_ADMIN_KEY && \
     service postgresql stop && \
-    pip install ldap
+    pip install python-ldap
 
 # Add Ansible playbook for installing tools
 ADD roles/galaxy-tools-playbook $GALAXY_HOME/ansible/galaxy-tools-playbook
