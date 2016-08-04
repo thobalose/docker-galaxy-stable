@@ -159,7 +159,7 @@ Note that if you would like to run any of the [cleanup scripts](https://wiki.gal
 Personalize your Galaxy
 -----------------------
 
-The Galaxy welcome screen can be changed by providing a `welcome.hml` page in `/home/user/galaxy_storage/`. All files starting with `welcome` will be copied during starup and served as indroduction page. If you want to include images or other media, name them `welcome_*` and link them relative to your `welcome.html` ([example](`https://github.com/bgruening/docker-galaxy-stable/blob/master/galaxy/welcome.html`)).
+The Galaxy welcome screen can be changed by providing a `welcome.html` page in `/home/user/galaxy_storage/`. All files starting with `welcome` will be copied during starup and served as indroduction page. If you want to include images or other media, name them `welcome_*` and link them relative to your `welcome.html` ([example](`https://github.com/bgruening/docker-galaxy-stable/blob/master/galaxy/welcome.html`)).
 
 
 Deactivating services
@@ -302,10 +302,10 @@ The lite mode will only start postgresql and a single Galaxy process, without ng
 special feature from the normal mode. In particular there is no support for the export folder or any Magic Environment variables.
 
   ```sh
-  docker run -i -t -p 8080:8080 bgruening/galaxy-stable startup_lite.sh
+  docker run -i -t -p 8080:8080 bgruening/galaxy-stable startup_lite
   ```
 
-This will also use the standard `job_conf.xml.sample_basic` shipped by Galaxy. If you want to use the special the regular one from the normal mode you can pass `-j` to the `startup_lite.sh` script.
+This will also use the standard `job_conf.xml.sample_basic` shipped by Galaxy. If you want to use the special the regular one from the normal mode you can pass `-j` to the `startup_lite` script.
 
 
 Extending the Docker Image
@@ -447,6 +447,9 @@ History
  - 16.04:
   - include a Galaxy-bare mode, enable with `-e BARE=True`
   - first release with [HTCondor](https://research.cs.wisc.edu/htcondor/) installed and pre-configured
+ - 16.07:
+  - documentation and tests updates for SLURM integration by @mvdbeek
+  - first version with initial Docker compose support (proftpd ✔️ )
 
 Support & Bug Reports
 ---------------------

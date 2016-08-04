@@ -8,8 +8,6 @@ if len( sys.argv ) == 2:
 else:
     PG_DATA_DIR_DEFAULT = "/var/lib/postgresql/9.3/main"
 PG_DATA_DIR_HOST = os.environ.get("PG_DATA_DIR_HOST", "/export/postgresql/9.3/main/")
-PG_CONF = '/etc/postgresql/9.3/main/postgresql.conf'
-
 
 def change_path( src ):
     """
@@ -48,9 +46,15 @@ if __name__ == "__main__":
 
     galaxy_root_dir = os.environ.get('GALAXY_ROOT', '/galaxy-central/')
 
-    if os.path.exists( '/export/.distribution_config/' ):
-        shutil.rmtree( '/export/.distribution_config/' )
-    shutil.copytree( os.path.join(galaxy_root_dir, 'config'), '/export/.distribution_config/' )
+    galaxy_distrib_paths = {'/galaxy-central/config/': '/export/.distribution_config',
+                            '/galaxy-central/lib': '/export/galaxy-central/lib',
+                            '/galaxy-central/tools': '/export/galaxy-central/tools'}
+    for image_path, export_path in galaxy_distrib_paths.items():
+        if os.path.exists(export_path):
+            shutil.rmtree(export_path)
+        shutil.copytree( image_path, export_path )
+
+    shutil.copy('/galaxy-central/requirements.txt','/export/galaxy-central/requirements.txt')
 
 
     # Copy all files starting with "welcome"
@@ -63,7 +67,7 @@ if __name__ == "__main__":
 
     if not os.path.exists( '/export/galaxy-central/' ):
         os.makedirs("/export/galaxy-central/")
-        os.chown( "/export/galaxy-central/", int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
+    os.chown( "/export/galaxy-central/", int(os.environ['GALAXY_UID']), int(os.environ['GALAXY_GID']) )
 
     change_path( os.path.join(galaxy_root_dir, 'config') )
 
@@ -84,6 +88,7 @@ if __name__ == "__main__":
     change_path( os.path.join(galaxy_root_dir, 'display_applications') )
     change_path( os.path.join(galaxy_root_dir, 'tool_deps') )
     change_path( os.path.join(galaxy_root_dir, 'tool-data') )
+    change_path( os.path.join(galaxy_root_dir, 'database') )
     change_path( '/shed_tools/' )
     
     if os.path.exists('/export/reports_htpasswd'):
@@ -102,14 +107,10 @@ if __name__ == "__main__":
         # User given dbpath, usually a directory from the host machine
         # copy the postgresql data folder to the new location
         subprocess.call('cp -R %s/* %s' % (PG_DATA_DIR_DEFAULT, PG_DATA_DIR_HOST), shell=True)
+        os.symlink( os.path.join(os.environ.get('PG_CONF_DIR_DEFAULT'), 'conf.d'), os.path.join(PG_DATA_DIR_HOST, 'conf.d') )
         # copytree needs an non-existing dst dir, how annoying :(
         # shutil.copytree(PG_DATA_DIR_DEFAULT, PG_DATA_DIR_HOST)
         subprocess.call('chown -R postgres:postgres /export/postgresql/', shell=True)
         subprocess.call('chmod -R 0755 /export/', shell=True)
         subprocess.call('chmod -R 0700 %s' % PG_DATA_DIR_HOST, shell=True)
 
-    # change data_directory of PostgreSQL to the new location
-    # This is not strictly needed because we are starting postgresql with pointing to the data directory
-    new_data_directory = "'%s'" % PG_DATA_DIR_HOST
-    cmd = 'sed -i "s|data_directory = .*|data_directory = %s|g" %s' % (new_data_directory, PG_CONF)
-    subprocess.call(cmd, shell=True)
