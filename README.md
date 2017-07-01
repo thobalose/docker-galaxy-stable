@@ -217,7 +217,7 @@ docker run -d -p 8080:80 -p 8021:21 -p 8800:8800 \
 
 The port 8800 is the proxy port that is used to handle Interactive Environments. `--privileged` is needed to start docker containers inside docker. If your IE does not open, please make sure you open your Galaxy instance with your hostname or a [FQDN](https://en.wikipedia.org/wiki/Fully_qualified_domain_name), but not with localhost or 127.0.0.1.
 
-## Pulling IE Images <a name="#Pulling-IE-Images" /> [[toc]](#toc)
+## Pulling IE Images <a name="Pulling-IE-Images" /> [[toc]](#toc)
 
 It is now possible to preload the IE images used by galaxy. Thus, preventing the IE images to be downloaded on launch. To enable this feature one need to set the `PULL_IE_IMAGES` environment variable to `True`.
 
